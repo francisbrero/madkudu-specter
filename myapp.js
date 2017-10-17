@@ -14,8 +14,8 @@ InboxSDK.load(1, 'sdk_test12_4ff1a33e18').then(function(sdk){
 
     // add a link to your awesome calendar
     composeView.addButton({
-      title: "Add Calendar!",
-      iconUrl: 'http://www.madkudu.com/static/images/madkudu_square.svg',
+      title: "Add Calendly!",
+      iconUrl: 'https://financesonline.com/uploads/2017/08/calel.png',
       onClick: function(event) {
         event.composeView.insertLinkIntoBodyAtCursor('here', 'https://calendly.com/francis-madkudu/30min');
       },
@@ -24,19 +24,35 @@ InboxSDK.load(1, 'sdk_test12_4ff1a33e18').then(function(sdk){
 
     // add a link to your awesome calendar
     composeView.addButton({
-      title: "Add Custom link!",
-      iconUrl: 'https://images-na.ssl-images-amazon.com/images/I/51zLH89jnxL._AC_UL320_SR244,320_.jpg',
+      title: "Add Magic links!",
+      iconUrl: 'http://www.madkudu.com/static/images/madkudu_square.svg',
       onClick: function(event) {
+        // created an encoded version of the email of the recipient
         var contacts = composeView.getToRecipients();
         var email;
-        var email_encoded;
+        var emailEncoded;
+        var suffix;
         if(contacts.length == 1) {
           email = contacts[0].emailAddress;
-          email_encoded = btoa(email);
+          emailEncoded = btoa(email);
+          suffix = '?f=' + emailEncoded;
         };
-        event.composeView.insertLinkIntoBodyAtCursor(email, 'https://www.madkudu.com/?f'+email_encoded);
+        if (!suffix) {return};
+
+        // add our suffix to all links in the email
+        var emailContent = composeView.getHTMLContent();
+        var newEmailContent = urlify(emailContent, suffix);
+        event.composeView.setBodyHTML(newEmailContent);
       },
       orderHint: 2,
     });
   });
+
+  // a function that parses text looking for URLs that contain madkudu.com and end  and adds a suffix
+  function urlify(text, suffix) {
+    var urlRegex = /(\bhttps?:\/\/(\S+|\S?)madkudu\.com(\S+|\S?)\/)/gi;
+    return text.replace(urlRegex, function(url) {
+        return url + suffix;
+    })
+  }
 });

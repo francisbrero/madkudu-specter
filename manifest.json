@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "MadKudu Link",
   "description": "Add calendly link to email",
-  "version": "1.0.24",
+  "version": "1.0.43",
   "permissions": [
     "https://mail.google.com/",
     "https://inbox.google.com/"
@@ -13,5 +13,8 @@
       "js": ["inboxsdk.js", "myapp.js"],
       "run_at": "document_end"
     }
-  ]
+  ],
+  "icons": {
+    "256": "madkudu_square_256.png"
+  }
 }
