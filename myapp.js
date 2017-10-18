@@ -56,11 +56,15 @@ InboxSDK.load(1, 'sdk_test12_4ff1a33e18').then(function(sdk){
     });
   });
 
-  // a function that parses text looking for URLs that contain madkudu.com and adds a suffix
+  // a function that parses text looking for URLs that contain madkudu.com and ends with / and adds a suffix
+  // the trickery here is, if we have no / then we add one and then apply the transformation
   function urlify(text, suffix) {
     var urlRegex = /(\bhttps?:\/\/(\S+|\S?)madkudu\.com(\S+|\S?)\/\")/gi;
+    var urlRegexNo = /(\bhttps?:\/\/(\S+|\S?)madkudu\.com(\S+|\S?)\")/gi;
     return text.replace(urlRegex, function(url) {
-        return url.substring(0, url.length-1) + suffix + '"';
+        return url.substring(0, url.length-2) + '"'; // remove /" from the url
+      }).replace(urlRegexNo, function(url) {
+        return url.substring(0, url.length-1) + '/' + suffix + '"'; 
     });
   }
 });

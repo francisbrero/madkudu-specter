@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "MadKudu Link",
   "description": "Add calendly link to email",
-  "version": "1.0.56",
+  "version": "1.0.59",
   "permissions": [
     "https://mail.google.com/",
     "https://inbox.google.com/"
