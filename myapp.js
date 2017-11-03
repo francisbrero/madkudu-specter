@@ -1,31 +1,5 @@
 InboxSDK.load(1, 'sdk_test12_4ff1a33e18').then(function(sdk){
 
-  // Add a cute litle image to the side
-  sdk.Conversations.registerThreadViewHandler(function(ThreadView){
-    addSidebar(ThreadView);
-  
-    ThreadView.on('destroy', function(event) {
-      console.log('Thread view going away, time to clean up');
-    });
-  });
-
-  function addSidebar(ThreadView) {
-    fetch(chrome.extension.getURL("sidebar.html"))
-    .then(function(response){
-      return response.text();
-    })
-    .then(function(text){
-      var el = document.createElement('div');
-      el.innerHTML = text;
-      ThreadView.addSidebarContentPanel({
-        title: 'App Title MadKudu',
-        iconUrl: chrome.runtime.getURL('madkudu_square_256.png'),
-        el: el
-      });
-    });
-  };
-
-
   // have the app load whenever a new composer is created
   sdk.Compose.registerComposeViewHandler(function(composeView){    
 
@@ -56,8 +30,8 @@ InboxSDK.load(1, 'sdk_test12_4ff1a33e18').then(function(sdk){
 
     // add a link to your awesome calendar
     composeView.addButton({
-      title: "Add MadKudu links!",
-      iconUrl: 'http://www.madkudu.com/static/images/madkudu_square.svg',
+      title: "Send with MadKudu!",
+      iconClass: 'madkuduSend',
       onClick: function(event) {
         // created an encoded version of the email of the recipient
         var contacts = composeView.getToRecipients();
@@ -74,11 +48,11 @@ InboxSDK.load(1, 'sdk_test12_4ff1a33e18').then(function(sdk){
         // add our suffix to all links in the email
         var emailContent = composeView.getHTMLContent();
         var newEmailContent = urlify(emailContent, suffix);
-        // event.composeView.setBodyText(newEmailContent);
         event.composeView.setBodyHTML(newEmailContent);
-        // event.composeView.send();
+        event.composeView.send();
       },
       orderHint: 2,
+      type: "SEND_ACTION",
     });
   });
 

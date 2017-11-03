@@ -1,0 +1,11 @@
+.madkuduSend {
+	background-color: #3398df;
+	width: 70px;
+	text-align: left;
+	letter-spacing: 1px;
+	padding-left: 3px;
+	background-image: url("http://www.madkudu.com/static/images/madkudu_rectangle_large.png");
+	background-size: 90%;
+	background-position: center;
+	background-repeat: no-repeat;
+}
