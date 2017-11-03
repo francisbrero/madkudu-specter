@@ -1,8 +1,34 @@
 InboxSDK.load(1, 'sdk_test12_4ff1a33e18').then(function(sdk){
 
+  // Add a cute litle image to the side
+  sdk.Conversations.registerThreadViewHandler(function(ThreadView){
+    addSidebar(ThreadView);
+  
+    ThreadView.on('destroy', function(event) {
+      console.log('Thread view going away, time to clean up');
+    });
+  });
+
+  function addSidebar(ThreadView) {
+    fetch(chrome.extension.getURL("sidebar.html"))
+    .then(function(response){
+      return response.text();
+    })
+    .then(function(text){
+      var el = document.createElement('div');
+      el.innerHTML = text;
+      ThreadView.addSidebarContentPanel({
+        title: 'App Title MadKudu',
+        iconUrl: chrome.runtime.getURL('madkudu_square_256.png'),
+        el: el
+      });
+    });
+  };
+
+
   // have the app load whenever a new composer is created
-  sdk.Compose.registerComposeViewHandler(function(composeView){
-    
+  sdk.Compose.registerComposeViewHandler(function(composeView){    
+
     composeView.on('destroy', function(event) {
       console.log('compose view going away, time to clean up');
     });
