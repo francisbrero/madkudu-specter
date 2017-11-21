@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "MadKudu Link",
+  "name": "MadKudu Spectre (Alpha)",
   "description": "Track outbound leads on your website",
-  "version": "1.0.77",
+  "version": "1.1.20",
   "permissions": [
     "https://mail.google.com/",
     "https://inbox.google.com/"
@@ -10,7 +10,7 @@
   "content_scripts" : [
     {
       "matches": ["https://mail.google.com/*", "https://inbox.google.com/*"],
-      "js": ["inboxsdk.js", "myapp.js", "jquery.min.js"],
+      "js": ["inboxsdk.js", "myapp.js", "jquery.min.js", "md5.js"],
       "css": ["styles.css"],
       "run_at": "document_end"
     }
