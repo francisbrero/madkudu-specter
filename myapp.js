@@ -1,6 +1,6 @@
 var path;
-var api_key;
-var api_secret;
+var api_key = 'xx';
+var api_secret = 'xx';
 
 InboxSDK.load(1, 'sdk_test12_4ff1a33e18').then(function(sdk){
 
@@ -86,7 +86,8 @@ InboxSDK.load(1, 'sdk_test12_4ff1a33e18').then(function(sdk){
 
     // generate the dynamic element to add to the side bar
     const el = document.createElement("div");
-    var info = '';  
+    var info = '';
+    var newInfo = 'I am watching you!';  
 
     // Get all contacts in the thread including the sender if the person has answered
     var contacts = messageView.getRecipients();
@@ -96,8 +97,9 @@ InboxSDK.load(1, 'sdk_test12_4ff1a33e18').then(function(sdk){
     for (var i = 0; i < contacts.length; i++) {
       var contact = contacts[i];
       var email = contact.emailAddress;
-      if(email.indexOf('@madkudu.com') == -1 && email.indexOf('emailtosalesforce@') == -1){
-        var newInfo = 'for email: ' + email;
+      var emailWasAlreadySeen = wasAlreadySeen(email, contacts, i);
+      if(email.indexOf('@madkudu.com') == -1 && email.indexOf('emailtosalesforce@') == -1 && !emailWasAlreadySeen){
+        newInfo = email;
         
         // Mixpanel variables        
         var where = 'properties["$email"] == "' + email + '"';
@@ -106,12 +108,19 @@ InboxSDK.load(1, 'sdk_test12_4ff1a33e18').then(function(sdk){
         path = 'https://mixpanel.com/api/2.0/engage?api_key=' + api_key + "&expire=" + expire + "&where=" + where;
         path = path + "&sig=" + sig;
         var mixpanelData = getMixpanel();
-        var mixpanelInfo = ' we have no tracking :-( ';
+        var mixpanelInfo = 'we have no tracking :-(';
         // Check if we got results back from the API call
         if(mixpanelData.results.length >= 1){
-          mixpanelInfo = ' their customer fit is: ' + JSON.stringify(mixpanelData.results[0].$properties.mk_customer_fit) +' and they were last seen on the website: ' + JSON.stringify(mixpanelData.results[0].$properties.$last_seen);  
+          var mk_customer_fit = JSON.stringify(mixpanelData.results[0].$properties.mk_customer_fit) || 'unknown';
+          var curTime = new Date().getTime();
+          var lastSeen = JSON.stringify(mixpanelData.results[0].$properties.$last_seen).replace(/['"]+/g, '');
+          var lastSeenDate = new Date(lastSeen).getTime();
+          var days_since_last_seen = Number((curTime - lastSeenDate)/(24*60*60*1000)).toFixed(0);
+          // Number(((curTime - new Date(lastSeen).getTime())/(24*60*60*1000)).toFixed(0));
+          mixpanelInfo = '<div> MadKudu Customer fit is: <strong>' + mk_customer_fit + '</strong></div>' +
+                        '<div> They were last seen: <strong>' + days_since_last_seen + '</strong> days ago.</div>';  
         }        
-        info = info + newInfo + mixpanelInfo;
+        info = info + mixpanelInfo;
       }       
     }
 
@@ -120,7 +129,7 @@ InboxSDK.load(1, 'sdk_test12_4ff1a33e18').then(function(sdk){
 
     // Now add the side bar content
     threadView.addSidebarContentPanel({
-      title: 'I am watching you!',
+      title: newInfo,
       iconUrl: chrome.runtime.getURL('static/madkudu_square_256.png'),
       el
     });
@@ -136,6 +145,22 @@ InboxSDK.load(1, 'sdk_test12_4ff1a33e18').then(function(sdk){
     xhr.open('GET', url, false);
     xhr.send();
     return JSON.parse(xhr.responseText);
+  };
+
+  // Check if an element has been seen before the index of the array
+  function wasAlreadySeen(element, array, index){
+    if(index==0){
+      return false;
+    }
+    var res = false;
+    // expectation is that index <= array.length
+    for (var i = 0; i < index; i++) {
+      // check if the array already contained the element
+      if(array[i]==element){
+        res = true;
+      }
+    }
+    return res;
   };
 
 });
