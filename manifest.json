@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "MadKudu Spectre (Alpha)",
   "description": "Track outbound leads on your website",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "permissions": [
     "https://mail.google.com/",
     "https://inbox.google.com/"
