@@ -1,6 +1,6 @@
 var path;
-var bccSalesforceEmail = "INPUT YOUR SALESFORCE BCC LINK HERE";
-var calendlyLink = "INPUT YOUR CALENDLY LINK HERE";
+var bccSalesforceEmail = "INPUT_YOUR_SALESFORCE_BCC_LINK_HERE";
+var calendlyLink = "INPUT_YOUR_CALENDLY_LINK_HERE";
 
 InboxSDK.load(1, 'sdk_test12_4ff1a33e18').then(function(sdk){
 
