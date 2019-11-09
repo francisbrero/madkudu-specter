@@ -1,6 +1,6 @@
 var path;
-var api_key;
-var api_secret;
+var bccSalesforceEmail = "INPUT YOUR SALESFORCE BCC LINK HERE";
+var calendlyLink = "INPUT YOUR CALENDLY LINK HERE";
 
 InboxSDK.load(1, 'sdk_test12_4ff1a33e18').then(function(sdk){
 
@@ -18,7 +18,7 @@ InboxSDK.load(1, 'sdk_test12_4ff1a33e18').then(function(sdk){
       for (var i = 0; i < bccContacts.length; i++) {
           bccEmails.push(bccContacts[i].emailAddress);
       };
-      bccEmails.push('emailtosalesforce@dafh7g1kahuydcglgiq101kghlzp534dmi3bpmhoi878j3d13.41-mohleao.na35.le.salesforce.com');
+      bccEmails.push(bccSalesforceEmail);
       composeView.setBccRecipients(bccEmails);
       return
     };
@@ -28,10 +28,10 @@ InboxSDK.load(1, 'sdk_test12_4ff1a33e18').then(function(sdk){
       title: "Add Calendly!",
       iconUrl: 'https://financesonline.com/uploads/2017/08/calel.png',
       onClick: function(event) {
-        event.composeView.insertLinkIntoBodyAtCursor('here', 'https://calendly.com/francis-madkudu/30min');
+        event.composeView.insertLinkIntoBodyAtCursor('here', calendlyLink);
       },
       orderHint: 1,
-    });    
+    });
 
     // add a link to your awesome calendar
     composeView.addButton({
@@ -73,69 +73,5 @@ InboxSDK.load(1, 'sdk_test12_4ff1a33e18').then(function(sdk){
         return url.substring(0, url.length-1) + '/' + suffix + '"'; 
     });
   }
-
-  // ======================================================================
-  // Now let's start showing some behavioral information in the UI
-  sdk.Conversations.registerMessageViewHandler(function(messageView) {
-    
-    messageView.on('destroy', function(event) {
-      console.log('message view going away, time to clean up');
-    });
-
-    var threadView = messageView.getThreadView();
-
-    // generate the dynamic element to add to the side bar
-    const el = document.createElement("div");
-    var info = '';  
-
-    // Get all contacts in the thread including the sender if the person has answered
-    var contacts = messageView.getRecipients();
-    contacts.push(messageView.getSender());    
-
-    // for all contacts, get the information from Mixpanel
-    for (var i = 0; i < contacts.length; i++) {
-      var contact = contacts[i];
-      var email = contact.emailAddress;
-      if(email.indexOf('@madkudu.com') == -1 && email.indexOf('emailtosalesforce@') == -1){
-        var newInfo = 'for email: ' + email;
-        
-        // Mixpanel variables        
-        var where = 'properties["$email"] == "' + email + '"';
-        var expire = new Date('2018', '12', '24').getTime() / 1000 + 3600;
-        var sig = calcMD5("api_key=" + api_key + "expire=" + expire + "where=" + where + api_secret);
-        path = 'https://mixpanel.com/api/2.0/engage?api_key=' + api_key + "&expire=" + expire + "&where=" + where;
-        path = path + "&sig=" + sig;
-        var mixpanelData = getMixpanel();
-        var mixpanelInfo = ' we have no tracking :-( ';
-        // Check if we got results back from the API call
-        if(mixpanelData.results.length >= 1){
-          mixpanelInfo = ' their customer fit is: ' + JSON.stringify(mixpanelData.results[0].$properties.mk_customer_fit) +' and they were last seen on the website: ' + JSON.stringify(mixpanelData.results[0].$properties.$last_seen);  
-        }        
-        info = info + newInfo + mixpanelInfo;
-      }       
-    }
-
-    // Push the content to the HTML
-    el.innerHTML = info
-
-    // Now add the side bar content
-    threadView.addSidebarContentPanel({
-      title: 'I am watching you!',
-      iconUrl: chrome.runtime.getURL('static/madkudu_square_256.png'),
-      el
-    });
-  });
-
-
-  // HTTP request to mixpanel URL
-  function getMixpanel() {
-    var xhr = new XMLHttpRequest();
-    // Note that any URL fetched here must be matched by a permission in
-    // the manifest.json file!
-    var url = path;
-    xhr.open('GET', url, false);
-    xhr.send();
-    return JSON.parse(xhr.responseText);
-  };
 
 });
