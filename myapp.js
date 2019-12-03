@@ -1,15 +1,25 @@
 var path;
-var bccSalesforceEmail = "INPUT_YOUR_SALESFORCE_BCC_LINK_HERE";
-var calendlyLink = "INPUT_YOUR_CALENDLY_LINK_HERE";
+var bccSalesforceEmail;
+var calendlyLink;
+
 
 InboxSDK.load(1, 'sdk_test12_4ff1a33e18').then(function(sdk){
 
   // have the app load whenever a new composer is created
   sdk.Compose.registerComposeViewHandler(function(composeView){    
+  
+  chrome.storage.sync.get({
+    bccSalesforceEmail: 'francis@madkudu.com',
+    calendlyLink: 'https://www.madkudu.com'
+  }, function(items) {
+    bccSalesforceEmail = items.bccSalesforceEmail;
+    calendlyLink = items.calendlyLink;
+    // console.log('bccSalesforceEmail currently is ' + items.bccSalesforceEmail);
+  });
 
     composeView.on('destroy', function(event) {
       console.log('compose view going away, time to clean up');
-    });
+    });    
 
     // automagically add my salesforce bcc to the current bcc addresses at the time of sending
     function bccSalesforce(composeView) {
@@ -60,7 +70,7 @@ InboxSDK.load(1, 'sdk_test12_4ff1a33e18').then(function(sdk){
       orderHint: 2,
       type: "SEND_ACTION",
     });
-  });
+  });   
 
   // a function that parses text looking for URLs that contain madkudu.com and ends with / and adds a suffix
   // the trickery here is, if we have no / then we add one and then apply the transformation
