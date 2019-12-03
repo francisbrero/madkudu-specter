@@ -1,11 +1,12 @@
 {
   "manifest_version": 2,
   "name": "MadKudu Spectre (Alpha)",
-  "description": "Track outbound leads on your website",
-  "version": "1.2.5",
+  "description": "Upgrade your Gmail with MadKudu!",
+  "version": "1.3.23",
   "permissions": [
     "https://mail.google.com/",
-    "https://inbox.google.com/"
+    "https://inbox.google.com/",
+    "storage"
   ],
   "content_scripts" : [
     {
@@ -20,6 +21,11 @@
   },
     "web_accessible_resources": [
     "sidebar.html",
-    "static/madkudu_square_256.png"
-  ]
+    "static/madkudu_square_256.png",
+    "options.html"
+  ],
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  }
 }
