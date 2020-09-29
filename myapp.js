@@ -47,23 +47,7 @@ InboxSDK.load(1, 'sdk_test12_4ff1a33e18').then(function(sdk){
     composeView.addButton({
       title: "Send with MadKudu!",
       iconClass: 'madkuduSend',
-      onClick: function(event) {
-        // created an encoded version of the email of the recipient
-        var contacts = composeView.getToRecipients();
-        var email;
-        var emailEncoded;
-        var suffix;
-        if(contacts.length == 1) {
-          email = contacts[0].emailAddress;
-          emailEncoded = btoa(email);
-          suffix = '?f=' + emailEncoded;
-        };
-        if (!suffix) {return};
-
-        // add our suffix to all links in the email
-        var emailContent = composeView.getHTMLContent();
-        var newEmailContent = urlify(emailContent, suffix);
-        event.composeView.setBodyHTML(newEmailContent);
+      onClick: function(event) {        
         bccSalesforce(composeView);
         event.composeView.send();
       },
@@ -71,17 +55,5 @@ InboxSDK.load(1, 'sdk_test12_4ff1a33e18').then(function(sdk){
       type: "SEND_ACTION",
     });
   });   
-
-  // a function that parses text looking for URLs that contain madkudu.com and ends with / and adds a suffix
-  // the trickery here is, if we have no / then we add one and then apply the transformation
-  function urlify(text, suffix) {
-    var urlRegex = /(\bhttps?:\/\/(\S+|\S?)madkudu\.com(\S+|\S?)\/\")/gi;
-    var urlRegexNo = /(\bhttps?:\/\/(\S+|\S?)madkudu\.com(\S+|\S?)\")/gi;
-    return text.replace(urlRegex, function(url) {
-        return url.substring(0, url.length-2) + '"'; // remove /" from the url
-      }).replace(urlRegexNo, function(url) {
-        return url.substring(0, url.length-1) + '/' + suffix + '"'; 
-    });
-  }
 
 });
